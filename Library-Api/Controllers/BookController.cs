@@ -4,11 +4,13 @@ using Library_Application.Services;
 using Library_Application.BookDTO;
 using Microsoft.AspNetCore.Mvc;
 using Library_Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Library_Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class BookController : ControllerBase
     {
         private readonly IBook _bookService;
@@ -17,6 +19,7 @@ namespace Library_Api.Controllers
             _bookService = bookServices;
         }
         [HttpGet]
+       // [Authorize]
         public async Task<IActionResult> GetAllBooks()
         {
             var booksDTO = await _bookService.GetAllBooks();
@@ -50,6 +53,29 @@ namespace Library_Api.Controllers
                 return NotFound("Book not found");
             return Ok(deletedBook);
         }
+
+        [HttpGet("id/{id}")]
+        public async Task<IActionResult> GetBookById(Guid id)
+        {
+            var book = await _bookService.GetBookById(id);
+            if (book == null)
+                return NotFound("Book not found");
+            return Ok(book);
+        }
+
+        [HttpGet("author")]
+
+        public async Task<IActionResult> GetByAuthor(string author)
+        {
+            var BookAuthor = await _bookService.GetBooksByAuthor(author);
+            if (BookAuthor == null)
+            {
+                return NotFound("Book not found");
+            }
+            return Ok(BookAuthor);
+
+        }
+
     }
 
 }

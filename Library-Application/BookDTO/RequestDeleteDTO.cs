@@ -1,16 +1,18 @@
-﻿namespace Library_Application.BookDTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Library_Application.BookDTO
 {
     public class RequestDeleteDTO
     {
-        public Guid Id { get; set; }
-
+      public string Message { get; internal set; }
+      public Guid Id { get; internal set; }
         public RequestDeleteDTO()
         {
             
         }
-        public RequestDeleteDTO(Guid id)
+        public RequestDeleteDTO(string message)
         {
-            Id = id;
+            Message = message;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Library_Application.Interfaces
     {
         public Task<List<ResponseBookDTO>> GetAllBooks();
 
-        public Task<Book> GetBookById(Guid id);
+        public Task<ResponseBookDTO> GetBookById(Guid id);
 
         public Task<RequestCreateBookDTO> AddBook(RequestCreateBookDTO bookDTO);
 

@@ -1,15 +1,17 @@
 ﻿using Library_Domain.Model;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library_Infra.Connect
 {
-    public class DBConnection : DbContext
+    public class DBConnection : IdentityDbContext
     {
         public DBConnection(DbContextOptions<DBConnection> options) : base(options)
         {
         }
 
         public DbSet<Book> Books { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -2,7 +2,6 @@
 {
     public class RequestUpdateDTO
     {
-
        
         public string Title { get; set; }
         public string Author { get; set; } = string.Empty;

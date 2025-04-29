@@ -35,7 +35,8 @@ public class BookMappingProfile : Profile
         ));
 
         CreateMap<Book, RequestDeleteDTO>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Message, opt => opt.MapFrom(src => "Book deleted successfully"));
 
         CreateMap<Book, ResponseBookDTO>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
