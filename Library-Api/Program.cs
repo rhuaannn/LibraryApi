@@ -2,6 +2,7 @@ using Library_Application.Interfaces;
 using Library_Application.Services;
 using Library_Domain.Model;
 using Library_Infra.Connect;
+using Library_Infra.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,14 @@ builder.Services.AddDbContext<DBConnection>(options =>
         b => b.MigrationsAssembly("Library-Infra")
     ));
 
+builder.Services.AddScoped<ICachingService, Caching>();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.InstanceName = "instance";
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+});
+
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<DBConnection>();

@@ -1,10 +1,10 @@
-﻿using AutoMapper;
+﻿using Library_Application.BookDTO;
 using Library_Application.Interfaces;
-using Library_Application.Services;
-using Library_Application.BookDTO;
-using Microsoft.AspNetCore.Mvc;
 using Library_Domain.Model;
-using Microsoft.AspNetCore.Authorization;
+using Library_Infra.Redis;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Serialization; 
 
 namespace Library_Api.Controllers
 {
@@ -14,17 +14,26 @@ namespace Library_Api.Controllers
     public class BookController : ControllerBase
     {
         private readonly IBook _bookService;
-        public BookController( IBook bookServices)
+        private readonly ICachingService _cache;
+        public BookController( IBook bookServices, ICachingService cache)
         {
             _bookService = bookServices;
+            _cache = cache;
         }
         [HttpGet]
-       // [Authorize]
         public async Task<IActionResult> GetAllBooks()
         {
+            var bookCache = await _cache.GetAsync<List<ResponseBookDTO>>("books");
+            if (bookCache != null)
+            {
+                var books = JsonSerializer.Deserialize<List<ResponseBookDTO>>(bookCache);
+                return Ok(books);
+            }
             var booksDTO = await _bookService.GetAllBooks();
             if (booksDTO == null || booksDTO.Count == 0)
                 return NotFound("No books found");
+
+            await _cache.SetAsync("books", JsonSerializer.Serialize(booksDTO));
 
             return Ok(booksDTO);
         }
@@ -54,13 +63,19 @@ namespace Library_Api.Controllers
             return Ok(deletedBook);
         }
 
-        [HttpGet("id/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetBookById(Guid id)
         {
-            var book = await _bookService.GetBookById(id);
-            if (book == null)
+            var bookCaching = await _cache.GetAsync<ResponseBookDTO>(id.ToString());
+            if (!string.IsNullOrEmpty(bookCaching))
+            {
+                var book = JsonSerializer.Deserialize<ResponseBookDTO>(bookCaching);
+                return Ok(book);
+            }
+            var bookById = await _bookService.GetBookById(id);
+            if (bookById == null)
                 return NotFound("Book not found");
-            return Ok(book);
+            return Ok(bookById);
         }
 
         [HttpGet("author")]
