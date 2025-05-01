@@ -3,6 +3,7 @@
     public interface ICachingService
     {
         Task SetAsync(string key, string value);
-        Task<string> GetAsync<T>(string key);
+        Task<string> GetAsync(string key);
+        Task RemoveAsyc(string key);
     }
 }

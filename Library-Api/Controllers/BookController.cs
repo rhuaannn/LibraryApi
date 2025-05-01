@@ -23,20 +23,21 @@ namespace Library_Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllBooks()
         {
-            var bookCache = await _cache.GetAsync<List<ResponseBookDTO>>("books");
-            if (bookCache != null)
+            var bookCache = await _cache.GetAsync("Books"); // Sem tipo genérico aqui
+            if (!string.IsNullOrEmpty(bookCache))
             {
                 var books = JsonSerializer.Deserialize<List<ResponseBookDTO>>(bookCache);
                 return Ok(books);
             }
+
             var booksDTO = await _bookService.GetAllBooks();
             if (booksDTO == null || booksDTO.Count == 0)
                 return NotFound("No books found");
 
             await _cache.SetAsync("books", JsonSerializer.Serialize(booksDTO));
-
             return Ok(booksDTO);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AddBook([FromBody] RequestCreateBookDTO bookDTO)
@@ -46,27 +47,42 @@ namespace Library_Api.Controllers
             var book = await _bookService.AddBook(bookDTO);
             if (book == null)
                 return BadRequest("Error creating book");
+            await _cache.RemoveAsyc("books");
             return CreatedAtAction(nameof(GetAllBooks), new { id = bookDTO.Author }, book);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] RequestUpdateDTO dto)
         {
+            if (dto == null)
+                return BadRequest("Invalid update data");
+
+            var bookToUpdate = await _bookService.GetBookById(id);
+            if (bookToUpdate == null)
+                return NotFound("Book not found");
+
             var updatedBook = await _bookService.UpdateBook(id, dto);
+            if (updatedBook == null)
+                return BadRequest("Error updating book");
+
+            await _cache.SetAsync(id.ToString(), JsonSerializer.Serialize(updatedBook));
+            await _cache.RemoveAsyc("books");
             return Ok(updatedBook);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
+            await _cache.RemoveAsyc(id.ToString());
             var deletedBook = await _bookService.DeleteBook(id);
             if (deletedBook == null)
                 return NotFound("Book not found");
+            await _cache.RemoveAsyc("books");
             return Ok(deletedBook);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBookById(Guid id)
         {
-            var bookCaching = await _cache.GetAsync<ResponseBookDTO>(id.ToString());
+            var bookCaching = await _cache.GetAsync(id.ToString());
             if (!string.IsNullOrEmpty(bookCaching))
             {
                 var book = JsonSerializer.Deserialize<ResponseBookDTO>(bookCaching);

@@ -23,10 +23,16 @@ namespace Library_Infra.Redis
         {
              await _cache.SetStringAsync(key, value, _options);
         }
-        public async Task<string> GetAsync<T>(string key)
+        public async Task<string> GetAsync(string key)
         {
-            return await _cache.GetStringAsync(key);
+             return await _cache.GetStringAsync(key);
+
+        }
+
+        public async Task RemoveAsyc(string key)
+        {
+            await _cache.RemoveAsync(key);
         }
     }
-    
+
 }
