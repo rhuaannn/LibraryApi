@@ -1,10 +1,8 @@
 ﻿using Library_Application.BookDTO;
 using Library_Application.Interfaces;
-using Library_Domain.Model;
 using Library_Infra.Redis;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Text.Json.Serialization; 
 
 namespace Library_Api.Controllers
 {
@@ -21,7 +19,7 @@ namespace Library_Api.Controllers
             _cache = cache;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks()
+        public async Task<IActionResult> GetAllBooksAsync()
         {
             var bookCache = await _cache.GetAsync("Books"); // Sem tipo genérico aqui
             if (!string.IsNullOrEmpty(bookCache))
@@ -40,7 +38,7 @@ namespace Library_Api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddBook([FromBody] RequestCreateBookDTO bookDTO)
+        public async Task<IActionResult> AddBookAsync([FromBody] RequestCreateBookDTO bookDTO)
         {
             if (bookDTO == null)
                 return BadRequest("Invalid book data");
@@ -48,10 +46,10 @@ namespace Library_Api.Controllers
             if (book == null)
                 return BadRequest("Error creating book");
             await _cache.RemoveAsyc("books");
-            return CreatedAtAction(nameof(GetAllBooks), new { id = bookDTO.Author }, book);
+            return CreatedAtAction(nameof(GetAllBooksAsync), new { id = bookDTO.Author }, book);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] RequestUpdateDTO dto)
+        public async Task<IActionResult> UpdateBookAsync(Guid id, [FromBody] RequestUpdateDTO dto)
         {
             if (dto == null)
                 return BadRequest("Invalid update data");
@@ -69,7 +67,7 @@ namespace Library_Api.Controllers
             return Ok(updatedBook);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> DeleteBookAsync(Guid id)
         {
             await _cache.RemoveAsyc(id.ToString());
             var deletedBook = await _bookService.DeleteBook(id);
@@ -80,7 +78,7 @@ namespace Library_Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBookById(Guid id)
+        public async Task<IActionResult> GetBookByIdAsync(Guid id)
         {
             var bookCaching = await _cache.GetAsync(id.ToString());
             if (!string.IsNullOrEmpty(bookCaching))
@@ -96,7 +94,7 @@ namespace Library_Api.Controllers
 
         [HttpGet("author")]
 
-        public async Task<IActionResult> GetByAuthor(string author)
+        public async Task<IActionResult> GetByAuthorAsync(string author)
         {
             var BookAuthor = await _bookService.GetBooksByAuthor(author);
             if (BookAuthor == null)

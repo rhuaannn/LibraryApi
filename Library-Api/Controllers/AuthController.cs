@@ -1,17 +1,14 @@
 ﻿namespace Library_Api.Controllers
 {
     using Library_Domain.Model;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Tokens;
     using System.IdentityModel.Tokens.Jwt;
-    using System.Security.Claims;
     using System.Text;
 
-        [Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -34,7 +31,7 @@
         {
             var user = new IdentityUser
             {
-               UserName = registeruserViewModel.Email,
+                UserName = registeruserViewModel.Email,
                 Email = registeruserViewModel.Email,
                 EmailConfirmed = true
             };
@@ -43,7 +40,7 @@
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return Ok(GerarToken());
+                return Ok("Usuário registrado!");
             }
             return Problem("User registration failed");
         }
