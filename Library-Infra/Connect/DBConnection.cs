@@ -1,4 +1,5 @@
 ﻿using Library_Domain.Model;
+using Library_Domain.ValueObject;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,9 +26,10 @@ namespace Library_Infra.Connect
                       .IsRequired();
 
                 entity.OwnsOne(e => e.Author)
-                      .Property(a => a.Name)
-                      .HasColumnName("Author")
-                      .IsRequired();
+                     .Property(a => a.Value)
+                     .HasColumnName("Author")
+                     .IsRequired();
+
 
                 entity.OwnsOne(e => e.Genre)
                         .Property(g => g.Value)

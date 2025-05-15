@@ -60,11 +60,14 @@ namespace Library_Application.Services
 
         public async Task<List<Book>> GetBooksByAuthor(string authorName)
         {
-            var books = await _dbconnection.Books
-                .Where(book => book.Author.Name == authorName)
+            var books = await _dbconnection.Books 
+                .Where(b => b.Author.Value.Contains(authorName))
                 .ToListAsync();
-
-            return books;
+            if (books == null || books.Count == 0)
+            {
+                throw new Exception("No books found for this author");
+            }
+                return books;
         }
 
         public Task<List<Book>> GetBooksByGenre(string genreName)

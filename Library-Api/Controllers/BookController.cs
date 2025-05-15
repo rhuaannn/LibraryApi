@@ -108,7 +108,7 @@ namespace Library_Api.Controllers
         public async Task<IActionResult> GetByAuthorAsync(string author)
         {
             var BookAuthor = await _bookService.GetBooksByAuthor(author);
-            if (BookAuthor == null)
+            if (BookAuthor == null) 
             {
                 return NotFound("Book not found");
             }
