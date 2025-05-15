@@ -19,6 +19,8 @@ namespace Library_Api.Controllers
             _cache = cache;
         }
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllBooksAsync()
         {
             var bookCache = await _cache.GetAsync("Books"); // Sem tipo genérico aqui
@@ -38,6 +40,8 @@ namespace Library_Api.Controllers
 
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> AddBookAsync([FromBody] RequestCreateBookDTO bookDTO)
         {
             if (bookDTO == null)
@@ -49,6 +53,8 @@ namespace Library_Api.Controllers
             return CreatedAtAction(nameof(GetAllBooksAsync), new { id = bookDTO.Author }, book);
         }
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateBookAsync(Guid id, [FromBody] RequestUpdateDTO dto)
         {
             if (dto == null)
@@ -67,6 +73,8 @@ namespace Library_Api.Controllers
             return Ok(updatedBook);
         }
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteBookAsync(Guid id)
         {
             await _cache.RemoveAsyc(id.ToString());
@@ -74,10 +82,12 @@ namespace Library_Api.Controllers
             if (deletedBook == null)
                 return NotFound("Book not found");
             await _cache.RemoveAsyc("books");
-            return Ok(deletedBook);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetBookByIdAsync(Guid id)
         {
             var bookCaching = await _cache.GetAsync(id.ToString());
@@ -93,7 +103,8 @@ namespace Library_Api.Controllers
         }
 
         [HttpGet("author")]
-
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByAuthorAsync(string author)
         {
             var BookAuthor = await _bookService.GetBooksByAuthor(author);
