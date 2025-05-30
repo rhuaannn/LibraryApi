@@ -21,16 +21,16 @@ namespace Library_Api.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllBooksAsync()
+        public async Task<IActionResult> GetAllBooks(int skip = 0, int take = 10)
         {
-            var bookCache = await _cache.GetAsync("Books"); // Sem tipo genérico aqui
+            var bookCache = await _cache.GetAsync("Books"); 
             if (!string.IsNullOrEmpty(bookCache))
             {
                 var books = JsonSerializer.Deserialize<List<ResponseBookDTO>>(bookCache);
                 return Ok(books);
             }
 
-            var booksDTO = await _bookService.GetAllBooks();
+            var booksDTO = await _bookService.GetAllBooks(skip,take);
             if (booksDTO == null || booksDTO.Count == 0)
                 return NotFound("No books found");
 
@@ -50,8 +50,9 @@ namespace Library_Api.Controllers
             if (book == null)
                 return BadRequest("Error creating book");
             await _cache.RemoveAsyc("books");
-            return CreatedAtAction(nameof(GetAllBooksAsync), new { id = bookDTO.Author }, book);
+            return Ok(book);
         }
+
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]

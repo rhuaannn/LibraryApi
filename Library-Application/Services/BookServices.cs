@@ -3,17 +3,20 @@ using Library_Application.BookDTO;
 using Library_Application.Interfaces;
 using Library_Domain.Model;
 using Library_Infra.Connect;
+using Library_Infra.RepositoryBook;
 using Microsoft.EntityFrameworkCore;
 namespace Library_Application.Services
 {
-    public class BookServices : IBook
+    public class BookServices: IBook
     {
         private readonly DBConnection _dbconnection;
+        private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
 
-        public BookServices(DBConnection dbConnection, IMapper mapper)
+        public BookServices(IBookRepository bookRepository, IMapper mapper, DBConnection dbConnection)
         {
             _dbconnection = dbConnection;
+            _bookRepository = bookRepository;
             _mapper = mapper;
         }
 
@@ -41,9 +44,9 @@ namespace Library_Application.Services
             return new RequestDeleteDTO { Message = "Book deleted successfully" }; 
         }
 
-        public async Task<List<ResponseBookDTO>> GetAllBooks()
+        public async Task<List<ResponseBookDTO>> GetAllBooks(int skip, int take)
         {
-            var books = await _dbconnection.Books.ToListAsync();
+            var books = await _bookRepository.GetAllBooks(skip, take);
             return _mapper.Map<List<ResponseBookDTO>>(books);
         }
 
@@ -93,5 +96,7 @@ namespace Library_Application.Services
 
             return _mapper.Map<ResponseBookDTO>(book);
         }
+
+        
     }
 }

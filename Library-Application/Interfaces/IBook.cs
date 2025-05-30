@@ -5,18 +5,12 @@ namespace Library_Application.Interfaces
 {
     public interface IBook
     {
-        public Task<List<ResponseBookDTO>> GetAllBooks();
-
-        public Task<ResponseBookDTO> GetBookById(Guid id);
-
-        public Task<RequestCreateBookDTO> AddBook(RequestCreateBookDTO bookDTO);
-
-        public Task<ResponseBookDTO> UpdateBook(Guid id, RequestUpdateDTO requestUpdateDTO);
-
-        public Task<RequestDeleteDTO> DeleteBook(Guid id);
-
-        public Task<List<Book>> GetBooksByAuthor(string authorName);
-
-        public Task<List<Book>> GetBooksByGenre(string genreName);
+        Task<ResponseBookDTO> GetBookById(Guid id);
+        Task<RequestCreateBookDTO> AddBook(RequestCreateBookDTO bookDTO);
+        Task<ResponseBookDTO> UpdateBook(Guid id, RequestUpdateDTO requestUpdateDTO);
+        Task<RequestDeleteDTO> DeleteBook(Guid id);
+        Task<List<Book>> GetBooksByAuthor(string authorName);
+        Task<List<Book>> GetBooksByGenre(string genreName);
+        Task<List<ResponseBookDTO>> GetAllBooks(int skip, int take); 
     }
 }

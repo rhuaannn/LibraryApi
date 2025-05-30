@@ -3,6 +3,7 @@ using Library_Application.Services;
 using Library_Domain.Model;
 using Library_Infra.Connect;
 using Library_Infra.Redis;
+using Library_Infra.RepositoryBook;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<DBConnection>(options =>
     ));
 
 builder.Services.AddScoped<ICachingService, Caching>();
+builder.Services.AddTransient<IBookRepository, BookRepository>();
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.InstanceName = "instance";
