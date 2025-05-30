@@ -14,8 +14,8 @@ namespace Library_Infra.Redis
             _cache = cache;
             _options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(120),
-                SlidingExpiration = TimeSpan.FromMinutes(120)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1),
+                SlidingExpiration = TimeSpan.FromMinutes(1)
             };
 
         }
