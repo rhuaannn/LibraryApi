@@ -13,6 +13,20 @@ namespace Library_Infra.RepositoryBook
             _dbConnection = dbConnection;
         }
 
+        public async Task<Book> AddBook(Book book)
+        {
+           var addedBook = await _dbConnection.Books.AddAsync(book);
+            return addedBook.Entity;
+        }
+
+        public async Task DeleteBook(Guid id)
+        {
+            var deleteBook = await _dbConnection.Books.FirstOrDefaultAsync(b => b.Id == id);
+            await _dbConnection.Books.ExecuteDeleteAsync();
+            await _dbConnection.SaveChangesAsync();
+
+        }
+
         public async Task<List<Book>> GetAllBooks(int skip, int take, CancellationToken cancellationToken = default)
         {
             return await _dbConnection.Books
@@ -20,6 +34,31 @@ namespace Library_Infra.RepositoryBook
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync(cancellationToken);
+        }
+
+        public async Task<Book> GetBookById(Guid id)
+        {
+            var book = await _dbConnection.Books.FindAsync(id);
+            return book;
+        }
+
+        public async Task<List<Book>> GetBooksByAuthor(string authorName)
+        {
+
+            var books = await _dbConnection.Books
+                .Where(b => b.Author.Value.Contains(authorName))
+                .ToListAsync();
+            return books;
+        }
+
+        public Task<List<Book>> GetBooksByGenre(string genreName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Book> UpdateBook(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

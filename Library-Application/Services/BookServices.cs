@@ -22,26 +22,27 @@ namespace Library_Application.Services
 
         public async Task<RequestCreateBookDTO> AddBook(RequestCreateBookDTO bookDTO)
         {
+
             var createBook = _mapper.Map<Book>(bookDTO);
-            var addedBook = await _dbconnection.Books.AddAsync(createBook); 
+            var addedBook = await _bookRepository.AddBook(createBook);
             if (addedBook == null)
             {
                 throw new Exception("Error creating book");
             }
-            await _dbconnection.SaveChangesAsync();
-            return _mapper.Map<RequestCreateBookDTO>(createBook); 
+
+            return _mapper.Map<RequestCreateBookDTO>(addedBook);
         }
 
-        public async Task<RequestDeleteDTO> DeleteBook(Guid id)
+        public async Task DeleteBook(Guid id)
         {
-            var book = await _dbconnection.Books.FindAsync(id);  
+
+            var book = await _bookRepository.GetBookById(id);
             if (book == null)
             {
-                throw new Exception("Book not found");
+                throw new KeyNotFoundException($"Book with ID {id} not found.");
             }
-            _dbconnection.Books.Remove(book);  
-            await _dbconnection.SaveChangesAsync();
-            return new RequestDeleteDTO { Message = "Book deleted successfully" }; 
+             await _bookRepository.DeleteBook(id);
+            
         }
 
         public async Task<List<ResponseBookDTO>> GetAllBooks(int skip, int take)
@@ -54,23 +55,11 @@ namespace Library_Application.Services
         {
             var book = await _dbconnection.Books.FindAsync(id);
 
-             if (book == null)
+            if (book == null)
             {
-                throw new Exception("Book not found");
+                throw new KeyNotFoundException($"Book with ID {id} not found.");
             }
             return _mapper.Map<ResponseBookDTO>(book);
-        }
-
-        public async Task<List<Book>> GetBooksByAuthor(string authorName)
-        {
-            var books = await _dbconnection.Books 
-                .Where(b => b.Author.Value.Contains(authorName))
-                .ToListAsync();
-            if (books == null || books.Count == 0)
-            {
-                throw new Exception("No books found for this author");
-            }
-                return books;
         }
 
         public Task<List<Book>> GetBooksByGenre(string genreName)
@@ -78,7 +67,7 @@ namespace Library_Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<ResponseBookDTO> UpdateBook(Guid id, RequestUpdateDTO requestUpdateDTO)
+        public async Task<RequestUpdateDTO> UpdateBook(Guid id, RequestUpdateDTO requestUpdateDTO)
         {
             var book = await _dbconnection.Books.FindAsync(id);
             if (book == null)
@@ -94,9 +83,14 @@ namespace Library_Application.Services
             _dbconnection.Books.Update(book);
             await _dbconnection.SaveChangesAsync();
 
-            return _mapper.Map<ResponseBookDTO>(book);
+            return _mapper.Map<RequestUpdateDTO>(book);
         }
 
-        
+
+        public async Task<List<ResponseBookDTO>> GetBooksByAuthor(string authorName)
+        {
+            var books = await _bookRepository.GetBooksByAuthor(authorName);
+            return _mapper.Map<List<ResponseBookDTO>>(books);
+        }
     }
 }

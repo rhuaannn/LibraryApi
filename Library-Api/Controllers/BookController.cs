@@ -79,9 +79,7 @@ namespace Library_Api.Controllers
         public async Task<IActionResult> DeleteBookAsync(Guid id)
         {
             await _cache.RemoveAsyc(id.ToString());
-            var deletedBook = await _bookService.DeleteBook(id);
-            if (deletedBook == null)
-                return NotFound("Book not found");
+            await _bookService.DeleteBook(id);
             await _cache.RemoveAsyc("books");
             return NoContent();
         }
