@@ -25,9 +25,12 @@ builder.Services.AddScoped<ICachingService, Caching>();
 builder.Services.AddTransient<IBookRepository, BookRepository>();
 builder.Services.AddStackExchangeRedisCache(options =>
 {
+    var redisHost = builder.Configuration["Redis:Host"];
+    var redisPort = builder.Configuration["Redis:Port"];
+    options.Configuration = $"{redisHost}:{redisPort}";
     options.InstanceName = "instance";
-    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
 });
+
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -70,8 +73,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseAuthentication();
-    app.UseAuthorization();
 }
 
 app.UseHttpsRedirection();
