@@ -10,10 +10,10 @@ namespace Library_Domain.Model
         private PublishedDate publishedDate;
 
         public Guid Id { get; private set; } = Guid.NewGuid();
-        public Title Title { get; private set; }
-        public Author Author { get; private set; }
-        public Genre Genre { get; private set; }
-        public PublishedDate PublishedDate { get; private set; }
+        public Title Title { get;  set; }
+        public Author Author { get;  set; }
+        public Genre Genre { get;  set; }
+        public PublishedDate PublishedDate { get;  set; }
         public string Description { get; set; } = string.Empty;
         protected Book()
         {

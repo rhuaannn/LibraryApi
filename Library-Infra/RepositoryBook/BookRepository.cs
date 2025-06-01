@@ -1,4 +1,5 @@
 ﻿using Library_Domain.Model;
+using Library_Domain.ValueObject;
 using Library_Infra.Connect;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ namespace Library_Infra.RepositoryBook
         public async Task<Book> AddBook(Book book)
         {
            var addedBook = await _dbConnection.Books.AddAsync(book);
+            await _dbConnection.SaveChangesAsync();
             return addedBook.Entity;
         }
 
@@ -56,9 +58,11 @@ namespace Library_Infra.RepositoryBook
             throw new NotImplementedException();
         }
 
-        public Task<Book> UpdateBook(Guid id)
+        public async Task<Book> UpdateBook(Book book)
         {
-            throw new NotImplementedException();
+            _dbConnection.Books.Update(book);
+            await _dbConnection.SaveChangesAsync();
+            return book;
         }
     }
 }

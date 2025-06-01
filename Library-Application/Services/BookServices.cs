@@ -69,7 +69,7 @@ namespace Library_Application.Services
 
         public async Task<RequestUpdateDTO> UpdateBook(Guid id, RequestUpdateDTO requestUpdateDTO)
         {
-            var book = await _dbconnection.Books.FindAsync(id);
+            var book = await _bookRepository.GetBookById(id);
             if (book == null)
             {
                 throw new Exception("Book not found");
@@ -80,9 +80,7 @@ namespace Library_Application.Services
             }
 
             _mapper.Map(requestUpdateDTO, book);
-            _dbconnection.Books.Update(book);
-            await _dbconnection.SaveChangesAsync();
-
+            var updatedBook = await _bookRepository.UpdateBook(book);
             return _mapper.Map<RequestUpdateDTO>(book);
         }
 
