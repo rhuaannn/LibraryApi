@@ -4,8 +4,13 @@
     {
         public string Value { get; }
 
+        protected Author()
+        {
+        }
         public Author(string value)
         {
+            if(string.IsNullOrEmpty(value))
+               throw new ArgumentNullException("Autor não pode ser nulo");
             Value = value;
         }
 
