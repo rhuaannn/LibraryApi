@@ -36,10 +36,7 @@ namespace Library_Infra.Connect
                         .HasColumnName("Genre")
                         .IsRequired();
 
-                entity.OwnsOne(e => e.PublishedDate)
-                        .Property(p => p.Date)
-                        .HasColumnName("PublishedDate")
-                        .IsRequired();
+          
             });
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DBConnection).Assembly);

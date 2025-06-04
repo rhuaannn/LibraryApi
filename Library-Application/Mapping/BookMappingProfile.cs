@@ -12,7 +12,7 @@ public class BookMappingProfile : Profile
                 new Title(dto.Title),
                 new Author(dto.Author),
                 new Genre(dto.Genre),
-                new PublishedDate(dto.PublishedDate),
+                dto.PublishedDate,
                 dto.Description
             ));
 
@@ -25,14 +25,22 @@ public class BookMappingProfile : Profile
                 dto.Description
                 ))
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title.Value))
-            .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author))
+            .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author.Value))
             .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre.Value))
             .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate.Date))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
 
+
         CreateMap<Book, RequestUpdateDTO>()
+               .ConstructUsing(dto => new RequestUpdateDTO(
+                dto.Title.Value,
+                dto.Author.Value,
+                dto.Genre.Value,
+                dto.PublishedDate.Date,
+                dto.Description
+                ))
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title.Value))
-            .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author))
+            .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author.Value))
             .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre.Value))
             .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate.Date))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
@@ -42,7 +50,7 @@ public class BookMappingProfile : Profile
                 new Title(dto.Title),
                 new Author(dto.Author),
                 new Genre(dto.Genre),
-                new PublishedDate(dto.PublishedDate),
+                dto.PublishedDate,
                 dto.Description
             ));
 

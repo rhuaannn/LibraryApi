@@ -9,13 +9,14 @@ namespace Library_Infra.Redis
         private readonly DistributedCacheEntryOptions _options;
            
         private readonly IDistributedCache _cache;
-        public Caching(IDistributedCache cache)
+        public Caching(IDistributedCache cache, IOptions<CacheSettings> cacheSettings)
         {
             _cache = cache;
+            var cacheSetting = cacheSettings.Value;
             _options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1),
-                SlidingExpiration = TimeSpan.FromMinutes(1)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheSetting.AbsoluteExpirationRelativeToNow),
+                SlidingExpiration = TimeSpan.FromMinutes(cacheSetting.SlidingExpiration)
             };
 
         }
@@ -23,13 +24,13 @@ namespace Library_Infra.Redis
         {
              await _cache.SetStringAsync(key, value, _options);
         }
-        public async Task<string> GetAsync(string key)
+        public async Task<string?> GetAsync(string key)
         {
              return await _cache.GetStringAsync(key);
 
         }
 
-        public async Task RemoveAsyc(string key)
+        public async Task RemoveAsync(string key)
         {
             await _cache.RemoveAsync(key);
         }

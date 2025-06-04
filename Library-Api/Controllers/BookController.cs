@@ -49,7 +49,7 @@ namespace Library_Api.Controllers
             var book = await _bookService.AddBook(bookDTO);
             if (book == null)
                 return BadRequest("Error creating book");
-            await _cache.RemoveAsyc("books");
+            await _cache.RemoveAsync("books");
             return Ok(book);
         }
 
@@ -69,8 +69,8 @@ namespace Library_Api.Controllers
             if (updatedBook == null)
                 return BadRequest("Error updating book");
 
+            await _cache.RemoveAsync("books");
             await _cache.SetAsync(id.ToString(), JsonSerializer.Serialize(updatedBook));
-            await _cache.RemoveAsyc("books");
             return Ok(updatedBook);
         }
         [HttpDelete("{id}")]
@@ -78,9 +78,9 @@ namespace Library_Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteBookAsync(Guid id)
         {
-            await _cache.RemoveAsyc(id.ToString());
+            await _cache.RemoveAsync(id.ToString());
             await _bookService.DeleteBook(id);
-            await _cache.RemoveAsyc("books");
+            await _cache.RemoveAsync("books");
             return NoContent();
         }
 

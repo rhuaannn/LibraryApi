@@ -7,7 +7,6 @@ using Library_Infra.RepositoryBook;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -31,7 +30,8 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "instance";
 });
 
-
+ // Replace the problematic line with the following:
+builder.Services.Configure<CacheSettings>(builder.Configuration.GetSection("CacheSettings"));
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddRoles<IdentityRole>()
